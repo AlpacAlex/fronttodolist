@@ -54,7 +54,7 @@ function App() {
           //console.error(error)
           setError({
             er: true,
-            msg: "error get request"
+            msg: "error in receiving data"
           })
         }
         break;
@@ -77,7 +77,7 @@ function App() {
             //console.error(error);
             setError({
               er: true,
-              msg: "error post request"
+              msg: "error in sending data"
             })
           }
         }
@@ -101,7 +101,7 @@ function App() {
             //console.log(error);
             setError({
               er: true,
-              msg: "error patch request"
+              msg: "error in updating data"
             })
           }
         }
@@ -126,7 +126,7 @@ function App() {
             //console.log(error);
             setError({
               er: true,
-              msg: "error delete request"
+              msg: "error in deleting data"
             })
           }
         }
@@ -195,7 +195,9 @@ function App() {
         break;
       case "updateTask":
         if (uuid && upTask && complete !== -1) {
-          await executeRequest({method: "patch", uuid: currentTodo.uuid }, { task: upTask, done: complete });
+          await executeRequest({method: "patch", uuid: uuid }, { task: upTask, done: complete });
+          const newTask = await executeRequest({method: "get"}, {});
+          curdone = [...newTask];
         }
         break;
       default:

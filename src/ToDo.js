@@ -22,7 +22,7 @@ function ToDo({ todo, done }) {
                 setChangeValue(todo.name);
             }
             document.activeElement.blur();
-        } else if (e.keyCodte === 27) {
+        } else if (e.keyCode === 27) {
             setChangeValue(todo.name);
             document.activeElement.blur();
         }
