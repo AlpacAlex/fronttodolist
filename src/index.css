@@ -1,13 +1,154 @@
+
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background-color:#222930;
+}
+/* 
+.App {
+  text-align: center;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.nameTask {
+  padding: 12px 32px 14px 18px;
+  border-radius: 4px 0 0 4px;
+  border: 2px solid #4EB1BA;
+  outline: none;
+  background: transparent;
+  color: #E9E9E9;
+  font-size: 18px;
 }
+
+.App form button {
+  padding: 18px 7px;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  outline: none;
+  background: linear-gradient(
+    -90deg,
+    rgba(235, 219, 6) -70%,
+    rgba(78, 177, 186) 100%
+  );
+  color: #fff;
+  text-transform: capitalize;
+}
+
+
+/*работа с div
+#buttons_and_sort {
+  margin: 5px;
+}
+/*
+  работа с кнопками
+      меняем размер, цвет
+
+div .all {
+  background-color:#4EB1BA;
+  margin: 8px;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 4px;
+}
+div .done {
+  background-color: #4EB1BA;
+  margin: 8px;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 4px;
+}
+div .undone {
+  background-color:#4EB1BA;
+  margin: 8px;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 4px;
+}
+/*  текст сортировки
+div .sort {
+  margin-left: 30px;
+  font-size: 18px;
+}
+/*  обработка картинок (стрелка вверх/вниз)
+#buttons_and_sort img {
+  height: 18px;
+  filter: invert(90%);
+}
+#buttons_and_sort img#up {
+  transform: rotate(90deg);
+}
+#buttons_and_sort img#down {
+  transform: rotate(-90deg);
+}
+
+
+
+
+
+
+
+label {
+  width: 100%;
+  display: block;
+  text-align: left;
+  padding: 10px;
+  border: 2px;
+  border-style: solid;
+  border-color:#4EB1BA;
+  font-size: 17px;
+  margin-bottom: 5px;
+  color: white;
+  border-radius: 6px;
+  margin-top: 14px;
+  font-size: 18px;
+}
+/*      реализуем кастомный чекбокс
+input[type="checkbox"] { /* change "blue" browser chrome to yellow 
+  filter: invert(90%) hue-rotate(350deg) brightness(1.7);
+  margin-right: 7px;
+}
+.ToDoTask {
+  border: none;
+  background: transparent;
+  color: #E9E9E9;
+  font-size: 18px;
+}
+
+/*      обработка картинки
+label img {
+  height: 20px;
+  float: right;
+  filter: invert(90%);
+}
+/*      работа с датой
+label span {
+  color: rgb(235, 219, 6);
+  margin-right: 5px;
+  float: right;
+}
+
+/*div пагинация
+.pagination {
+  margin-top: 40px;
+  display: block;
+  align-items: center;
+  justify-content: center;
+}
+/*      работа с ссылками
+.pagination button {
+  color: black;
+  background-color: #4EB1BA;
+  float: none;
+  padding: 8px 16px;
+  text-decoration: none;
+  border: 1px solid #222930; /* Gray 
+  border-radius: 4px;
+}
+/*          реализуем активную кнопку
+.pagination button.active {
+  /* background-color: #368f97;
+  border: 2px solid rgb(235, 219, 6);
+  color: black;
+}
+/*          подсветка числа(не активного) над мышкой
+.pagination button:hover:not(.active) {
+  background-color: #92d2d8;
+} */
