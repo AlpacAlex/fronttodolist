@@ -40,22 +40,14 @@ function App() {
           const response = await axios.get(urlAdres)
           //console.log(response)
           if (response.status === 200) {
-            return response.data
-            // const a = [...response.data]
-            // setTodos([...response.data])
-          } else {
-            //snack bar
-            // setError({
-            //   er: true,
-            //   msg: "error get request"
-            // })
-          }
+            return response.data;
+          } 
         } catch (error) {
           //console.error(error)
           setError({
             er: true,
-            msg: "error in receiving data\n(didn’t get a response from the server, try again)"
-          })
+            msg: error.response.data.message
+          });
         }
         break;
       case "post":
@@ -67,18 +59,15 @@ function App() {
               name: task,
               done: done
             });
-            //console.log(response);
+            console.log(response);
             if (response.status === 200) {
               return response.data; 
-            } else {
-              //snack bar flag error
             }
           } catch (error) {
-            //console.error(error);
             setError({
               er: true,
-              msg: "error in sending data\n(server did not receive data, change the task name to a unique one)"
-            })
+              msg: error.response.data.message
+            });
           }
         }
         break;
@@ -94,15 +83,13 @@ function App() {
             //console.log(response);
             if (response.status === 200) {
               return response.data; 
-            } else {
-              //snack bar flag error
             }
           } catch (error) {
-            //console.log(error);
             setError({
               er: true,
-              msg: "error in updating data\n(incorrect task change)"
-            })
+              msg: error.response.data.message
+            });
+            
           }
         }
         break;
@@ -123,16 +110,15 @@ function App() {
               //snack bar flag error
             }
           } catch (error) {
-            //console.log(error);
             setError({
               er: true,
-              msg: "error in deleting data\n(the file is already being processed for deletion)"
-            })
+              msg: error.response.data.message
+            });
           }
         }
         break;
       default:
-        console.log("method? error | default")
+        console.log("method? error | default");
     }
     return true;
   }

@@ -13,16 +13,21 @@ function ToDoForm({ done }) {
     const handleChange = (e) => {
         e.preventDefault()
         const newTextInput = e.currentTarget.value;
+        
         const isValid = validInputText.test(newTextInput);
         if (isValid) {
-            setUserInput(e.currentTarget.value)
+            setUserInput(e.currentTarget.value);
         }     
     };
     
     const handleSubmit = (e) => {
         e.preventDefault()
-        done({ it: "addTask", userInput: userInput })
-        setUserInput("")
+        const isValidSpace = userInput.replace(/\s+/g, '').length;
+        if (isValidSpace) {
+            done({ it: "addTask", userInput: userInput });
+            setUserInput("");
+        }
+        setUserInput("");
     };
 
     

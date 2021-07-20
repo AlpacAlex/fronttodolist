@@ -25,7 +25,7 @@ function ToDo({ todo, done }) {
         } else if (e.keyCode === 27) {
             setChangeValue(todo.name);
             document.activeElement.blur();
-        }
+        }       
     };
 
     //{it, userInput = "", complete = -1, uuid = 0, upTask = "" }
