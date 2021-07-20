@@ -31,23 +31,65 @@ function App() {
   const classes = useStyles();
   const URL = "https://todo-api-learning.herokuapp.com";
 
-  const executeRequest  = async ({method, userId = "1", uuid = ""}, {task = "", done = false }) => {
+  const executeRequest  = async ({method, userId = "1", uuid = ""}, {task = "", done = false }, { filter="", order="" }) => {
     switch(method) {
       case "get":
-        const GET_REQUEST = `/v1/tasks/${userId}`;
-        const urlAdres = URL + GET_REQUEST;
-        try {
-          const response = await axios.get(urlAdres)
-          //console.log(response)
-          if (response.status === 200) {
-            return response.data;
-          } 
-        } catch (error) {
-          //console.error(error)
-          setError({
-            er: true,
-            msg: error.response.data.message
-          });
+        if (filter && order) {
+          const GET_REQUEST = `/v1/tasks/${userId}?filterBy=${filter}&order=${order}`;
+          const urlAdres = URL + GET_REQUEST;
+          try {
+            const response = await axios.get(urlAdres)
+            if (response.status === 200) {
+              return response.data;
+            } 
+          } catch (error) {
+            setError({
+              er: true,
+              msg: error.response.data.message
+            });
+          }
+        } else if (filter) {
+          const GET_REQUEST = `/v1/tasks/${userId}?filterBy=${filter}`;
+          const urlAdres = URL + GET_REQUEST;
+          try {
+            const response = await axios.get(urlAdres)
+            if (response.status === 200) {
+              return response.data;
+            } 
+          } catch (error) {
+            setError({
+              er: true,
+              msg: error.response.data.message
+            });
+          }
+        } else if (order) {
+          const GET_REQUEST = `/v1/tasks/${userId}?order=${order}`;
+          const urlAdres = URL + GET_REQUEST;
+          try {
+            const response = await axios.get(urlAdres)
+            if (response.status === 200) {
+              return response.data;
+            } 
+          } catch (error) {
+            setError({
+              er: true,
+              msg: error.response.data.message
+            });
+          }
+        } else {
+          const GET_REQUEST = `/v1/tasks/${userId}`;
+          const urlAdres = URL + GET_REQUEST;
+          try {
+            const response = await axios.get(urlAdres)
+            if (response.status === 200) {
+              return response.data;
+            } 
+          } catch (error) {
+            setError({
+              er: true,
+              msg: error.response.data.message
+            });
+          }
         }
         break;
       case "post":
@@ -131,15 +173,15 @@ function App() {
     switch(it) {
       case "addTask":
         if(userInput) {
-          await executeRequest({ method: "post"}, { task: userInput });
-          const allTask = await executeRequest({method: "get"}, {});
+          await executeRequest({ method: "post"}, { task: userInput }, {});
+          const allTask = await executeRequest({method: "get"}, {}, { order: "asc" });
           curdone = [...allTask]; 
         }
         break;
       case "removeTask":
         if(uuid) {
-          await executeRequest({ method: "delete", uuid: uuid }, { });
-          const allTask = await executeRequest({method: "get"}, {});
+          await executeRequest({ method: "delete", uuid: uuid }, {}, {});
+          const allTask = await executeRequest({method: "get"}, {}, { order: "asc" });
           curdone = [...allTask];
           if (!((totalRecords - 1) % LIMIT)) {
             onPageChanged(1, currentPage - 1);
@@ -148,41 +190,41 @@ function App() {
         break;
       case "changeChecbox":
         if (userInput && uuid && complete !== -1) {
-          await executeRequest({method: "patch", uuid: uuid }, { task: userInput, done: !complete });
-          const allTask = await executeRequest({method: "get"}, {});
+          await executeRequest({method: "patch", uuid: uuid }, { task: userInput, done: !complete }, {});
+          const allTask = await executeRequest({method: "get"}, {}, { order: "asc" });
           curdone = [...allTask];
         }
         break;
       case "showAllTask":
-        const showAll = await executeRequest({method: "get"}, {});
+        const showAll = await executeRequest({method: "get"}, {}, { order: "asc" });
         curdone = [...showAll];
         break;
       case "showComplateTask":
-        const showComplate = await executeRequest({method: "get"}, {});
-        curdone = [...showComplate.filter( (todo) => todo.done === true)];;
+        const showComplate = await executeRequest({method: "get"}, {}, { filter: "done", order: "asc" });
+        curdone = [...showComplate];
         onPageChanged(1, 1);
         break;
       case "showUncomplateTask":
-        const showUnComplate = await executeRequest({method: "get"}, {});
-        curdone = [...showUnComplate.filter( (todo) => todo.done === false)];
+        const showUnComplate = await executeRequest({method: "get"}, {}, { filter: "undone", order: "asc"});
+        curdone = [...showUnComplate];
         onPageChanged(1, 1);
         break;
       case "sortByDate":
-        const sortByDate = await executeRequest({method: "get"}, {});
-        const sortTodo = [...sortByDate];
-        sortTodo.sort( (a,b) => Date.parse(a.createdAt) - Date.parse(b.createdAt) );
-        curdone = [...sortTodo];
+        const sortByDate = await executeRequest({method: "get"}, {}, { order: "asc" });
+        //const sortTodo = [...sortByDate];
+        //sortTodo.sort( (a,b) => Date.parse(a.createdAt) - Date.parse(b.createdAt) );
+        curdone = [...sortByDate];
         break;
       case "sortByReversDate":
-        const sortByReversDate = await executeRequest({method: "get"}, {});
-        const sortTodoRevers = [...sortByReversDate];
-        sortTodoRevers.sort( (a,b) => Date.parse(b.createdAt) - Date.parse(a.createdAt) );
-        curdone = [...sortTodoRevers];
+        const sortByReversDate = await executeRequest({method: "get"}, {}, { order: "desc" });
+        //const sortTodoRevers = [...sortByReversDate];
+        //sortTodoRevers.sort( (a,b) => Date.parse(b.createdAt) - Date.parse(a.createdAt) );
+        curdone = [...sortByReversDate];
         break;
       case "updateTask":
         if (uuid && upTask && complete !== -1) {
-          await executeRequest({method: "patch", uuid: uuid }, { task: upTask, done: complete });
-          const newTask = await executeRequest({method: "get"}, {});
+          await executeRequest({method: "patch", uuid: uuid }, { task: upTask, done: complete }, {});
+          const newTask = await executeRequest({method: "get"}, {}, { order: "asc" });
           curdone = [...newTask];
         }
         break;
@@ -231,7 +273,7 @@ function App() {
     //   }
     // }
     //deleteAll();
-    const serverData = await executeRequest({method: "get"}, {});
+    const serverData = await executeRequest({method: "get"}, {}, { order: "asc" });
     setCurrentTodo(serverData);
     //await executeRequest({ method: "post"}, { task: "test 1" });
     //await executeRequest({method: "patch", uuid: "0b1f790c-899d-44de-98c3-19c352acb8a8"}, { task: "update test 1", done: true });
@@ -244,8 +286,8 @@ function App() {
   return (
     <Box className="App"> 
       <Grid container spacing={0}>
-        <Paper style={styles.App.Header} elevation={0}>ToDo: {currentTodo.length}</Paper>
         <Grid item xs={12}>
+          <Paper style={styles.App.Header} elevation={0}>ToDo: {currentTodo.length}</Paper>
           <Paper style={styles.App.Paper}>
             <ToDoForm done={done}/>
           </Paper>

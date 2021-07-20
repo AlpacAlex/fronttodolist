@@ -13,6 +13,7 @@ const styles = {
             margin: "auto",
             textAlign: "center",
             fontSize: 40,
+            width: 500,
             backgroundColor: "transparent",
             color: "black"
         },
