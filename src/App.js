@@ -54,7 +54,7 @@ function App() {
           //console.error(error)
           setError({
             er: true,
-            msg: "error in receiving data"
+            msg: "error in receiving data\n(didn’t get a response from the server, try again)"
           })
         }
         break;
@@ -77,7 +77,7 @@ function App() {
             //console.error(error);
             setError({
               er: true,
-              msg: "error in sending data"
+              msg: "error in sending data\n(server did not receive data, change the task name to a unique one)"
             })
           }
         }
@@ -101,7 +101,7 @@ function App() {
             //console.log(error);
             setError({
               er: true,
-              msg: "error in updating data"
+              msg: "error in updating data\n(incorrect task change)"
             })
           }
         }
@@ -126,7 +126,7 @@ function App() {
             //console.log(error);
             setError({
               er: true,
-              msg: "error in deleting data"
+              msg: "error in deleting data\n(the file is already being processed for deletion)"
             })
           }
         }
@@ -283,7 +283,7 @@ function App() {
             />}     
           </Box>
         </Grid>
-          <Snackbar open={error.er} autoHideDuration={3000} onClose={handleCloseToast}>
+          <Snackbar open={error.er} autoHideDuration={7000} onClose={handleCloseToast}>
             <Alert onClose={handleCloseToast} severity="error">
               {error.msg}
             </Alert>
