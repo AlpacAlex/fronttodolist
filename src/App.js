@@ -16,7 +16,7 @@ function Alert(props) {
 }
 
 function App() {
-  const [todos, setTodos] = useState([]);
+  //const [todos, setTodos] = useState([]);
   const [currentTodo, setCurrentTodo] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [order, setOrder] = useState('asc');
@@ -34,144 +34,14 @@ function App() {
   const classes = useStyles();
   const URL = "https://todo-api-learning.herokuapp.com";
 
-  /*const executeRequest  = async ({method, userId = "1", uuid = ""}, {task = "", done = false }, { filter="", order="" }) => {
-    switch(method) {
-      case "get":
-        if (filter && order) {
-          const GET_REQUEST = `/v1/tasks/${userId}?filterBy=${filter}&order=${order}`;
-          const urlAdres = URL + GET_REQUEST;
-          try {
-            const response = await axios.get(urlAdres)
-            if (response.status === 200) {
-              return response.data;
-            } 
-          } catch (error) {
-            setError({
-              er: true,
-              msg: error.response.data.message
-            });
-          }
-        } else if (filter) {
-          const GET_REQUEST = `/v1/tasks/${userId}?filterBy=${filter}`;
-          const urlAdres = URL + GET_REQUEST;
-          try {
-            const response = await axios.get(urlAdres)
-            if (response.status === 200) {
-              return response.data;
-            } 
-          } catch (error) {
-            setError({
-              er: true,
-              msg: error.response.data.message
-            });
-          }
-        } else if (order) {
-          const GET_REQUEST = `/v1/tasks/${userId}?order=${order}`;
-          const urlAdres = URL + GET_REQUEST;
-          try {
-            const response = await axios.get(urlAdres)
-            if (response.status === 200) {
-              return response.data;
-            } 
-          } catch (error) {
-            setError({
-              er: true,
-              msg: error.response.data.message
-            });
-          }
-        } else {
-          const GET_REQUEST = `/v1/tasks/${userId}`;
-          const urlAdres = URL + GET_REQUEST;
-          try {
-            const response = await axios.get(urlAdres)
-            if (response.status === 200) {
-              return response.data;
-            } 
-          } catch (error) {
-            setError({
-              er: true,
-              msg: error.response.data.message
-            });
-          }
-        }
-        break;
-      case "post":
-        if (task) {
-          const GET_REQUEST = `/v1/task/${userId}`;
-          const urlAdres = URL + GET_REQUEST;
-          try {
-            const response = await axios.post(urlAdres, {
-              name: task,
-              done: done
-            });
-            console.log(response);
-            if (response.status === 200) {
-              return response.data; 
-            }
-          } catch (error) {
-            setError({
-              er: true,
-              msg: error.response.data.message
-            });
-          }
-        }
-        break;
-      case "patch":
-        if (uuid) {
-          const GET_REQUEST = `/v1/task/${userId}/${uuid}`;
-          const urlAdres = URL + GET_REQUEST;
-          try {
-            const response = await axios.patch(urlAdres, {//проверку на статус и возвращение? данных(data)
-              name: task,
-              done: done
-            });
-            //console.log(response);
-            if (response.status === 200) {
-              return response.data; 
-            }
-          } catch (error) {
-            setError({
-              er: true,
-              msg: error.response.data.message
-            });
-            
-          }
-        }
-        break;
-      case "delete":
-        if (uuid) {
-          const GET_REQUEST = `/v1/task/${userId}/${uuid}`;
-          const urlAdres = URL + GET_REQUEST;
-          try {
-            const response = await axios.delete(urlAdres, {//проверку на статус и возвращение? данных(data)
-              uuid: uuid,
-              name: task,
-              done: done
-            });
-            //console.log(response);
-            if (response.status === 204) {
-              return response; 
-            } else {
-              //snack bar flag error
-            }
-          } catch (error) {
-            setError({
-              er: true,
-              msg: error.response.data.message
-            });
-          }
-        }
-        break;
-      default:
-        console.log("method? error | default");
-    }
-    return true;
-  }*/
 
   const getRequest = async (userId = 1) => {
     const GET_REQUEST = `/v1/tasks/${userId}`;
     const urlAdres = URL + GET_REQUEST;
     try {
+      if (filterBy === "all") {
+        setFilterBy("");
+      }
       const response = await axios.get(urlAdres, { 
         params: {
           filterBy: filterBy,
@@ -234,9 +104,7 @@ function App() {
     const GET_REQUEST = `/v1/task/${userId}/${uuid}`;
     const urlAdres = URL + GET_REQUEST;
     try {
-      const response = await axios.delete(urlAdres, {//проверку на статус и возвращение? данных(data)
-        uuid: uuid
-      });
+      const response = await axios.delete(urlAdres);
       //console.log(response);
       if (response.status === 204) {
         return response; 
@@ -251,60 +119,46 @@ function App() {
     }
   }
   
-  const howToShowTask  = (filterBy) => filterBy(filterBy);
 
-  // const howToShowTask = (sTask, param, isAll = false) => {
-  //   //let curdone = [...todos];
-  //   switch(sTask) {
-  //     case "add":
-  //       if(param) {
-  //         const newItem = {
-  //           id: Date.now(),
-  //           task: param,
-  //           complete: false,
-  //         };
-  //         setTodos([...todos, newItem]);
-  //         setCurrentTodo([...todos, newItem]);
-  //       }
-  //       break;
-  //     case "complate":
-  //       let curdone = [...todos];
-  //       if (isAll) {
-  //         curdone = [...todos.filter( (todo) => todo.complete === (param ? true : false))];
-  //       }          
-  //       setCurrentTodo(curdone);
-  //       onPageChanged(1, 1);
-  //       break;
-  //   }
-  // }
+
+  const howToShowTask  = (filterBy) => setFilterBy(filterBy);
  
   const sortTodo = (orderBy) =>  setOrder(orderBy); 
 
-  const removeTask = (id) => {
-    setTodos([...todos.filter((todo) => todo.id !== id)])
-    setCurrentTodo([...todos.filter((todo) => todo.id !== id)])
+  const addTask = async (userInput) => {
+    await postRequest(userInput);
+    //getDataRequest();
+    setCurrentTodo(await getRequest());
+  }
+
+  const removeTask = async (uuid) => {
+    await deleteRequest(uuid);
     if (!((totalRecords - 1) % LIMIT)) {
-      onPageChanged(1, currentPage - 1)
+      onPageChanged(1, currentPage - 1);
     }
+    //getDataRequest();
+    setCurrentTodo(await getRequest());
   }
 
-  const handleToggle = (id) => {
-    const findId = todos.findIndex( (todo) => todo.id === id)
-    const copyTodo = [...todos]
-    copyTodo[findId].complete = !copyTodo[findId].complete
-    setCurrentTodo([...copyTodo])
-    setTodos([...copyTodo])
+  const fullUpdateTask = async (uuid, task, done, isCheckBox) => {
+    if (isCheckBox) {
+      await patchRequest(uuid, task, !done);
+    } else {
+      await patchRequest(uuid, task, done);
+    }
+    setCurrentTodo(await getRequest());
+    //getDataRequest();
   }
 
-  const updateTask = (id, upTask) => {
-    const findId = todos.findIndex( (todo) => todo.id === id)
-    const copyTodo = [...todos]
-    copyTodo[findId].task = upTask
-
-    //const newUpdTask = todos.map( (todo) => todo.id === id ? { ...todo, task: upTask} : { ...todo} )
-    setTodos([...copyTodo])
-    setCurrentTodo([...copyTodo])
-  }
+  // const getDataRequest = useCallback( async () => {
+  //   const myData = await getRequest();
+  //   const newData = myData.slice(
+  //     (currentPage - 1) * LIMIT,
+  //     (currentPage - 1) * LIMIT + LIMIT
+  //   );
+  //   setCurrentTodo(newData);
+  //   return myData;
+  // }, [currentPage, filterBy, order] );
   
   const onPageChanged = useCallback(
     (event, page, maxPage=-1) => {
@@ -319,7 +173,6 @@ function App() {
     if (reason === 'clickaway') {
       return;
     }
-
     setError(false);
   };
 
@@ -337,23 +190,14 @@ function App() {
 
   const pages = Math.ceil(totalRecords / LIMIT) || 0;
  
-  // useEffect( async () => {
-  //   // async function deleteAll() {
-  //   //   const allTask = await executeRequest({method: "get"}, {});
-  //   //   for (let i = 0; i < allTask.length; i++) {
-  //   //     await executeRequest({method: "delete", uuid: allTask[i].uuid }, { });
-  //   //   }
-  //   // }
-  //   //deleteAll();
-  //   //const serverData = await executeRequest({method: "get"}, {}, { order: "asc" });
-  //   //setCurrentTodo(serverData);
-  //   //await executeRequest({ method: "post"}, { task: "test 1" });
-  //   //await executeRequest({method: "patch", uuid: "0b1f790c-899d-44de-98c3-19c352acb8a8"}, { task: "update test 1", done: true });
-  //   //await executeRequest({method: "get"}, {});
-  //   //await executeRequest({method: "delete", uuid: "0b1f790c-899d-44de-98c3-19c352acb8a8"}, { task: "update test 1", done: true });//204(нет контента) все равно, но удаляет
-  //   //await executeRequest({method: "delete", uuid: "0b1f790c-899d-44de-98c3-19c352acb8a8"}, { });// удалил без параметров тела
-  //   //await executeRequest({method: "get"}, {});
-  // }, []);
+
+
+  useEffect( async () => {
+    console.log("useEffect");
+    const serverData = await getRequest();
+    setCurrentTodo(serverData);
+    //getDataRequest();
+  }, [filterBy, order]);
 
   return (
     <Box className="App"> 
@@ -361,7 +205,7 @@ function App() {
         <Grid item xs={12}>
           <Paper style={styles.App.Header} elevation={0}>ToDo: {currentTodo.length}</Paper>
           <Paper style={styles.App.Paper}>
-            <ToDoForm howToShowTask={howToShowTask}/>
+            <ToDoForm addTask={addTask}/>
           </Paper>
           <MenuToDo
             howToShowTask = {howToShowTask}
@@ -369,11 +213,10 @@ function App() {
           />
           {currentData.map((todo) =>        
             <ToDo
-              key={todo.id}//Date.parse(todo.createdAt)
+              key={Date.parse(todo.createdAt)}//Date.parse(todo.createdAt)
               todo={todo}           
-              handleToggle={handleToggle}
+              fullUpdateTask={fullUpdateTask}
               removeTask={removeTask}
-              updateTask={updateTask}
               />   
             )}
           <Box className={classes.root}>        

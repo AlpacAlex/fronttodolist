@@ -6,8 +6,8 @@ import styles from "./myStyle";
 
 
 
-function ToDo({ todo, handleToggle, removeTask, updateTask }) {
-    const [changeValue, setChangeValue] = useState(todo.task);
+function ToDo({ todo, fullUpdateTask, removeTask }) {
+    const [changeValue, setChangeValue] = useState(todo.name);
     const validInputText = /^[\w\s]{1,18}$/gm;
 
     const handleChangeValue = (e) => {
@@ -17,7 +17,7 @@ function ToDo({ todo, handleToggle, removeTask, updateTask }) {
         {
             const isValid = validInputText.test(newTextInput);
             if (isValid) {
-                updateTask(todo.id, newTextInput);
+                fullUpdateTask(todo.uuid, newTextInput, todo.done, false);
             } else {
                 setChangeValue(todo.name);
             }
@@ -33,9 +33,9 @@ function ToDo({ todo, handleToggle, removeTask, updateTask }) {
         <Grid item xs={12}>
             <Paper elevation={2} style={styles.ToDo.Paper}>
                 <Checkbox 
-                    checked={todo.complete ? true : false}
+                    checked={todo.done ? true : false}
                     onChange={()=>{}} 
-                    onClick={() => handleToggle(todo.id)}
+                    onClick={() => fullUpdateTask(todo.uuid, todo.name, todo.done, true)}
                     color="secondary"
                 />
                 <Input 
@@ -45,12 +45,12 @@ function ToDo({ todo, handleToggle, removeTask, updateTask }) {
                     onKeyDown={handleChangeValue}
                     style={{ width: "64%" }}
                 />
-                <Box component="span" style={styles.ToDo.Date} textAlign="right" m={1}>{new Date(todo.id).toLocaleDateString()}</Box>
+                <Box component="span" style={styles.ToDo.Date} textAlign="right" m={1}>{new Date(todo.createdAt).toLocaleDateString()}</Box>
                 <IconButton
                     style={styles.ToDo.Icon}               
                     color="secondary"
                     aria-label="Delete"
-                    onClick={() => removeTask(todo.id)}
+                    onClick={() => removeTask(todo.uuid)}
                 >
                     <Delete fontSize="small" />
                 </IconButton>

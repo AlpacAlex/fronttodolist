@@ -6,7 +6,7 @@ import Box from "@material-ui/core/Box";
 
 
 
-function ToDoForm({ howToShowTask }) {
+function ToDoForm({ addTask }) {
     const [userInput, setUserInput] = useState('');
     const validInputText = /^[\w\s]{0,25}$/gm;
 
@@ -24,7 +24,7 @@ function ToDoForm({ howToShowTask }) {
         e.preventDefault()
         const isValidSpace = userInput.replace(/\s+/g, '').length;
         if (isValidSpace) {
-            howToShowTask("add", userInput);
+            addTask(userInput);
             setUserInput("");
         }
         setUserInput("");
