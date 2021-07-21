@@ -8,6 +8,7 @@ import styles from "./myStyle";
 
 function ToDo({ todo, fullUpdateTask, removeTask }) {
     const [changeValue, setChangeValue] = useState(todo.name);
+    const [isDisabled, setIsDisabled] = useState(false);
     const validInputText = /^[\w\s]{1,18}$/gm;
 
     const handleChangeValue = (e) => {
@@ -28,6 +29,11 @@ function ToDo({ todo, fullUpdateTask, removeTask }) {
         }       
     };
 
+    const deleteTask = (uuid) => {
+        setIsDisabled(true);
+        removeTask(todo.uuid);
+    }
+
     //{it, userInput = "", complete = -1, uuid = 0, upTask = "" }
     return (
         <Grid item xs={12}>
@@ -47,10 +53,11 @@ function ToDo({ todo, fullUpdateTask, removeTask }) {
                 />
                 <Box component="span" style={styles.ToDo.Date} textAlign="right" m={1}>{new Date(todo.createdAt).toLocaleDateString()}</Box>
                 <IconButton
-                    style={styles.ToDo.Icon}               
+                    style={styles.ToDo.Icon}
+                    disabled={isDisabled}               
                     color="secondary"
                     aria-label="Delete"
-                    onClick={() => removeTask(todo.uuid)}
+                    onClick={() => deleteTask(todo.uuid)}
                 >
                     <Delete fontSize="small" />
                 </IconButton>
