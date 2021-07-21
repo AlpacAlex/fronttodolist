@@ -16,7 +16,7 @@ function Alert(props) {
 }
 
 function App() {
-  //const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState([]);
   const [currentTodo, setCurrentTodo] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -165,74 +165,36 @@ function App() {
     return true;
   }
 
-  const done = async ({it, userInput = "", complete = -1, uuid = 0, upTask = "" }) => {// передача аргументов по структуре newItem
-
-    //let done = [...todos];
-    let curdone = [...currentTodo];
-
-    switch(it) {
-      case "addTask":
-        if(userInput) {
-          await executeRequest({ method: "post"}, { task: userInput }, {});
-          const allTask = await executeRequest({method: "get"}, {}, { order: "asc" });
-          curdone = [...allTask]; 
+  const howToShowTask = (sTask, param) => {
+    let curdone = [...todos];
+    switch(sTask) {
+      case "add":
+        if(param) {
+          const newItem = {
+            id: Date.now(),
+            task: param,
+            complete: false,
+          };
+          setTodos([...todos, newItem])
         }
         break;
-      case "removeTask":
-        if(uuid) {
-          await executeRequest({ method: "delete", uuid: uuid }, {}, {});
-          const allTask = await executeRequest({method: "get"}, {}, { order: "asc" });
-          curdone = [...allTask];
-          if (!((totalRecords - 1) % LIMIT)) {
-            onPageChanged(1, currentPage - 1);
-          }
-        }
-        break;
-      case "changeChecbox":
-        if (userInput && uuid && complete !== -1) {
-          await executeRequest({method: "patch", uuid: uuid }, { task: userInput, done: !complete }, {});
-          const allTask = await executeRequest({method: "get"}, {}, { order: "asc" });
-          curdone = [...allTask];
-        }
-        break;
-      case "showAllTask":
-        const showAll = await executeRequest({method: "get"}, {}, { order: "asc" });
-        curdone = [...showAll];
-        break;
-      case "showComplateTask":
-        const showComplate = await executeRequest({method: "get"}, {}, { filter: "done", order: "asc" });
-        curdone = [...showComplate];
+      case "complate":
+        curdone = [...todos.filter( (todo) => todo.complete === (param ? true : false))];
         onPageChanged(1, 1);
         break;
-      case "showUncomplateTask":
-        const showUnComplate = await executeRequest({method: "get"}, {}, { filter: "undone", order: "asc"});
-        curdone = [...showUnComplate];
-        onPageChanged(1, 1);
-        break;
-      case "sortByDate":
-        const sortByDate = await executeRequest({method: "get"}, {}, { order: "asc" });
-        //const sortTodo = [...sortByDate];
-        //sortTodo.sort( (a,b) => Date.parse(a.createdAt) - Date.parse(b.createdAt) );
-        curdone = [...sortByDate];
-        break;
-      case "sortByReversDate":
-        const sortByReversDate = await executeRequest({method: "get"}, {}, { order: "desc" });
-        //const sortTodoRevers = [...sortByReversDate];
-        //sortTodoRevers.sort( (a,b) => Date.parse(b.createdAt) - Date.parse(a.createdAt) );
-        curdone = [...sortByReversDate];
-        break;
-      case "updateTask":
-        if (uuid && upTask && complete !== -1) {
-          await executeRequest({method: "patch", uuid: uuid }, { task: upTask, done: complete }, {});
-          const newTask = await executeRequest({method: "get"}, {}, { order: "asc" });
-          curdone = [...newTask];
-        }
-        break;
-      default:
-        console.log("error done task");
     }
-    setCurrentTodo(curdone);
-  };
+    setCurrentTodo(curdone)
+  }
+ 
+  const sortTodo = (bSort) => {
+    const sortedTodo = [...todos];
+    sortedTodo.sort( ( bSort ? 
+      ((a,b) => a.id - b.id) : 
+      ((a,b) => b.id - a.id)));
+
+    setCurrentTodo(sortedTodo);
+    //return sortedTodo;
+  }
   
   const onPageChanged = useCallback(
     (event, page, maxPage=-1) => {
@@ -289,10 +251,10 @@ function App() {
         <Grid item xs={12}>
           <Paper style={styles.App.Header} elevation={0}>ToDo: {currentTodo.length}</Paper>
           <Paper style={styles.App.Paper}>
-            <ToDoForm done={done}/>
+            <ToDoForm howToShowTask={howToShowTask}/>
           </Paper>
           <MenuToDo
-            done = {done}
+            howToShowTask = {howToShowTask}
           />
           {currentData.map((todo) =>        
             <ToDo
