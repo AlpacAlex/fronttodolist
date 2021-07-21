@@ -6,8 +6,8 @@ import styles from "./myStyle";
 
 
 
-function ToDo({ todo, done }) {
-    const [changeValue, setChangeValue] = useState(todo.name);
+function ToDo({ todo, handleToggle, removeTask, updateTask }) {
+    const [changeValue, setChangeValue] = useState(todo.task);
     const validInputText = /^[\w\s]{1,18}$/gm;
 
     const handleChangeValue = (e) => {
@@ -17,7 +17,7 @@ function ToDo({ todo, done }) {
         {
             const isValid = validInputText.test(newTextInput);
             if (isValid) {
-                done({ it: "updateTask", complete: todo.done, uuid: todo.uuid, upTask: newTextInput });
+                updateTask(todo.id, newTextInput);
             } else {
                 setChangeValue(todo.name);
             }
@@ -33,9 +33,9 @@ function ToDo({ todo, done }) {
         <Grid item xs={12}>
             <Paper elevation={2} style={styles.ToDo.Paper}>
                 <Checkbox 
-                    checked={todo.done ? true : false}
+                    checked={todo.complete ? true : false}
                     onChange={()=>{}} 
-                    onClick={() => done({ it: "changeChecbox", userInput: todo.name, complete: todo.done, uuid: todo.uuid })}
+                    onClick={() => handleToggle(todo.id)}
                     color="secondary"
                 />
                 <Input 
@@ -45,12 +45,12 @@ function ToDo({ todo, done }) {
                     onKeyDown={handleChangeValue}
                     style={{ width: "64%" }}
                 />
-                <Box component="span" style={styles.ToDo.Date} textAlign="right" m={1}>{new Date(todo.createdAt).toLocaleDateString()}</Box>
+                <Box component="span" style={styles.ToDo.Date} textAlign="right" m={1}>{new Date(todo.id).toLocaleDateString()}</Box>
                 <IconButton
                     style={styles.ToDo.Icon}               
                     color="secondary"
                     aria-label="Delete"
-                    onClick={() => done({ it: "removeTask", uuid: todo.uuid })}
+                    onClick={() => removeTask(todo.id)}
                 >
                     <Delete fontSize="small" />
                 </IconButton>

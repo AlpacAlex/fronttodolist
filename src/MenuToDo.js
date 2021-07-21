@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, IconButton } from '@material-ui/core';
-import {TrendingUpSharp, VerticalAlignBottom, VerticalAlignTop} from '@material-ui/icons';
+import {VerticalAlignBottom, VerticalAlignTop} from '@material-ui/icons';
 import styles from "./myStyle";
 
 

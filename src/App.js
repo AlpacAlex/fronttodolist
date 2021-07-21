@@ -199,6 +199,32 @@ function App() {
     setCurrentTodo(sortedTodo);
     //return sortedTodo;
   }
+
+  const removeTask = (id) => {
+    setTodos([...todos.filter((todo) => todo.id !== id)])
+    setCurrentTodo([...todos.filter((todo) => todo.id !== id)])
+    if (!((totalRecords - 1) % LIMIT)) {
+      onPageChanged(1, currentPage - 1)
+    }
+  }
+
+  const handleToggle = (id) => {
+    const findId = todos.findIndex( (todo) => todo.id === id)
+    const copyTodo = [...todos]
+    copyTodo[findId].complete = !copyTodo[findId].complete
+    setCurrentTodo([...copyTodo])
+    setTodos([...copyTodo])
+  }
+
+  const updateTask = (id, upTask) => {
+    const findId = todos.findIndex( (todo) => todo.id === id)
+    const copyTodo = [...todos]
+    copyTodo[findId].task = upTask
+
+    //const newUpdTask = todos.map( (todo) => todo.id === id ? { ...todo, task: upTask} : { ...todo} )
+    setTodos([...copyTodo])
+    setCurrentTodo([...copyTodo])
+  }
   
   const onPageChanged = useCallback(
     (event, page, maxPage=-1) => {
@@ -263,9 +289,11 @@ function App() {
           />
           {currentData.map((todo) =>        
             <ToDo
-              key={Date.parse(todo.createdAt)}
+              key={todo.id}//Date.parse(todo.createdAt)
               todo={todo}           
-              done={done}
+              handleToggle={handleToggle}
+              removeTask={removeTask}
+              updateTask={updateTask}
               />   
             )}
           <Box className={classes.root}>        
