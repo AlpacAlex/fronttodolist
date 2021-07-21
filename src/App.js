@@ -31,7 +31,7 @@ function App() {
   const classes = useStyles();
   const URL = "https://todo-api-learning.herokuapp.com";
 
-  const executeRequest  = async ({method, userId = "1", uuid = ""}, {task = "", done = false }, { filter="", order="" }) => {
+  /*const executeRequest  = async ({method, userId = "1", uuid = ""}, {task = "", done = false }, { filter="", order="" }) => {
     switch(method) {
       case "get":
         if (filter && order) {
@@ -163,10 +163,10 @@ function App() {
         console.log("method? error | default");
     }
     return true;
-  }
+  }*/
 
-  const howToShowTask = (sTask, param) => {
-    let curdone = [...todos];
+  const howToShowTask = (sTask, param, isAll = false) => {
+    //let curdone = [...todos];
     switch(sTask) {
       case "add":
         if(param) {
@@ -175,15 +175,19 @@ function App() {
             task: param,
             complete: false,
           };
-          setTodos([...todos, newItem])
+          setTodos([...todos, newItem]);
+          setCurrentTodo([...todos, newItem]);
         }
         break;
       case "complate":
-        curdone = [...todos.filter( (todo) => todo.complete === (param ? true : false))];
+        let curdone = [...todos];
+        if (isAll) {
+          curdone = [...todos.filter( (todo) => todo.complete === (param ? true : false))];
+        }          
+        setCurrentTodo(curdone);
         onPageChanged(1, 1);
         break;
     }
-    setCurrentTodo(curdone)
   }
  
   const sortTodo = (bSort) => {
@@ -227,23 +231,23 @@ function App() {
 
   const pages = Math.ceil(totalRecords / LIMIT) || 0;
  
-  useEffect( async () => {
-    // async function deleteAll() {
-    //   const allTask = await executeRequest({method: "get"}, {});
-    //   for (let i = 0; i < allTask.length; i++) {
-    //     await executeRequest({method: "delete", uuid: allTask[i].uuid }, { });
-    //   }
-    // }
-    //deleteAll();
-    const serverData = await executeRequest({method: "get"}, {}, { order: "asc" });
-    setCurrentTodo(serverData);
-    //await executeRequest({ method: "post"}, { task: "test 1" });
-    //await executeRequest({method: "patch", uuid: "0b1f790c-899d-44de-98c3-19c352acb8a8"}, { task: "update test 1", done: true });
-    //await executeRequest({method: "get"}, {});
-    //await executeRequest({method: "delete", uuid: "0b1f790c-899d-44de-98c3-19c352acb8a8"}, { task: "update test 1", done: true });//204(нет контента) все равно, но удаляет
-    //await executeRequest({method: "delete", uuid: "0b1f790c-899d-44de-98c3-19c352acb8a8"}, { });// удалил без параметров тела
-    //await executeRequest({method: "get"}, {});
-  }, []);
+  // useEffect( async () => {
+  //   // async function deleteAll() {
+  //   //   const allTask = await executeRequest({method: "get"}, {});
+  //   //   for (let i = 0; i < allTask.length; i++) {
+  //   //     await executeRequest({method: "delete", uuid: allTask[i].uuid }, { });
+  //   //   }
+  //   // }
+  //   //deleteAll();
+  //   //const serverData = await executeRequest({method: "get"}, {}, { order: "asc" });
+  //   //setCurrentTodo(serverData);
+  //   //await executeRequest({ method: "post"}, { task: "test 1" });
+  //   //await executeRequest({method: "patch", uuid: "0b1f790c-899d-44de-98c3-19c352acb8a8"}, { task: "update test 1", done: true });
+  //   //await executeRequest({method: "get"}, {});
+  //   //await executeRequest({method: "delete", uuid: "0b1f790c-899d-44de-98c3-19c352acb8a8"}, { task: "update test 1", done: true });//204(нет контента) все равно, но удаляет
+  //   //await executeRequest({method: "delete", uuid: "0b1f790c-899d-44de-98c3-19c352acb8a8"}, { });// удалил без параметров тела
+  //   //await executeRequest({method: "get"}, {});
+  // }, []);
 
   return (
     <Box className="App"> 
@@ -255,6 +259,7 @@ function App() {
           </Paper>
           <MenuToDo
             howToShowTask = {howToShowTask}
+            sortTodo = {sortTodo}
           />
           {currentData.map((todo) =>        
             <ToDo
