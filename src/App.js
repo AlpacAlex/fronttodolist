@@ -19,6 +19,9 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [currentTodo, setCurrentTodo] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [order, setOrder] = useState('asc');
+  const [filterBy, setFilterBy] = useState('all');
+
 
   const [error, setError] = useState({
     er: false,
@@ -165,40 +168,117 @@ function App() {
     return true;
   }*/
 
-  const howToShowTask = (sTask, param, isAll = false) => {
-    //let curdone = [...todos];
-    switch(sTask) {
-      case "add":
-        if(param) {
-          const newItem = {
-            id: Date.now(),
-            task: param,
-            complete: false,
-          };
-          setTodos([...todos, newItem]);
-          setCurrentTodo([...todos, newItem]);
+  const getRequest = async (userId = 1) => {
+    const GET_REQUEST = `/v1/tasks/${userId}`;
+    const urlAdres = URL + GET_REQUEST;
+    try {
+      const response = await axios.get(urlAdres, { 
+        params: {
+          filterBy: filterBy,
+          order: order
         }
-        break;
-      case "complate":
-        let curdone = [...todos];
-        if (isAll) {
-          curdone = [...todos.filter( (todo) => todo.complete === (param ? true : false))];
-        }          
-        setCurrentTodo(curdone);
-        onPageChanged(1, 1);
-        break;
+      })
+      if (response.status === 200) {
+        return response.data;
+      } 
+    } catch (error) {
+      setError({
+        er: true,
+        msg: error.response.data.message
+      });
     }
   }
- 
-  const sortTodo = (bSort) => {
-    const sortedTodo = [...todos];
-    sortedTodo.sort( ( bSort ? 
-      ((a,b) => a.id - b.id) : 
-      ((a,b) => b.id - a.id)));
 
-    setCurrentTodo(sortedTodo);
-    //return sortedTodo;
+  const postRequest = async (task, done = false, userId = 1) => {
+    const GET_REQUEST = `/v1/task/${userId}`;
+    const urlAdres = URL + GET_REQUEST;
+    try {// if task ???
+      const response = await axios.post(urlAdres, {
+        name: task,
+        done: done
+      });
+      //console.log(response);
+      if (response.status === 200) {
+        return response.data; 
+      }
+    } catch (error) {
+      setError({
+        er: true,
+        msg: error.response.data.message
+      });
+    }
   }
+
+  const patchRequest = async (uuid, task, done, userId = 1) => {
+    const GET_REQUEST = `/v1/task/${userId}/${uuid}`;
+    const urlAdres = URL + GET_REQUEST;
+    try {
+      const response = await axios.patch(urlAdres, {
+        name: task,
+        done: done
+      });
+      //console.log(response);
+      if (response.status === 200) {
+        return response.data; 
+      }
+    } catch (error) {
+      setError({
+        er: true,
+        msg: error.response.data.message
+      });
+      
+    }
+  }
+
+  const deleteRequest = async (uuid, userId = 1) => {
+    const GET_REQUEST = `/v1/task/${userId}/${uuid}`;
+    const urlAdres = URL + GET_REQUEST;
+    try {
+      const response = await axios.delete(urlAdres, {//проверку на статус и возвращение? данных(data)
+        uuid: uuid
+      });
+      //console.log(response);
+      if (response.status === 204) {
+        return response; 
+      } else {
+        //snack bar flag error
+      }
+    } catch (error) {
+      setError({
+        er: true,
+        msg: error.response.data.message
+      });
+    }
+  }
+  
+  const howToShowTask  = (filterBy) => filterBy(filterBy);
+
+  // const howToShowTask = (sTask, param, isAll = false) => {
+  //   //let curdone = [...todos];
+  //   switch(sTask) {
+  //     case "add":
+  //       if(param) {
+  //         const newItem = {
+  //           id: Date.now(),
+  //           task: param,
+  //           complete: false,
+  //         };
+  //         setTodos([...todos, newItem]);
+  //         setCurrentTodo([...todos, newItem]);
+  //       }
+  //       break;
+  //     case "complate":
+  //       let curdone = [...todos];
+  //       if (isAll) {
+  //         curdone = [...todos.filter( (todo) => todo.complete === (param ? true : false))];
+  //       }          
+  //       setCurrentTodo(curdone);
+  //       onPageChanged(1, 1);
+  //       break;
+  //   }
+  // }
+ 
+  const sortTodo = (orderBy) =>  setOrder(orderBy); 
 
   const removeTask = (id) => {
     setTodos([...todos.filter((todo) => todo.id !== id)])
