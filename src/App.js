@@ -29,13 +29,13 @@ function App() {
   });
   //const [flag, setFlag] = useState(0); 
   
-  let totalRecords = currentTodo.length;
+  //let totalRecords = currentTodo.length;
   const LIMIT = 5;
   const classes = useStyles();
-  const URL = "https://todo-api-learning.herokuapp.com";
+  const URL = "https://todo-api-learning.herokuapp.com";//m
 
 
-  const getRequest = async (userId = 1) => {
+  const getTodos = async (userId = 1) => {
     const GET_REQUEST = `/v1/tasks/${userId}`;
     const urlAdres = URL + GET_REQUEST;
     try {
@@ -49,15 +49,18 @@ function App() {
         }
       })
       if (response.status === 200) {
-        return response.data;
+        setCurrentTodo(response.data);
+        //onPageChanged(1, 1);
       } 
     } catch (error) {
       setError({
         er: true,
-        msg: error.response.data.message
-      });
-    }
+        msg: error.response?.data?.message
+      }); 
+      //setCurrentTodo([]);
+    }  
   }
+ 
 
   const postRequest = async (task, done = false, userId = 1) => {
     const GET_REQUEST = `/v1/task/${userId}`;
@@ -74,7 +77,7 @@ function App() {
     } catch (error) {
       setError({
         er: true,
-        msg: error.response.data.message
+        msg: error.response?.data?.message
       });
     }
   }
@@ -94,10 +97,10 @@ function App() {
     } catch (error) {
       setError({
         er: true,
-        msg: error.response.data.message
+        msg: error.response?.data?.message
       });
-      
     }
+
   }
 
   const deleteRequest = async (uuid, userId = 1) => {
@@ -114,12 +117,10 @@ function App() {
     } catch (error) {
       setError({
         er: true,
-        msg: error.response.data.message
+        msg: error.response?.data?.message
       });
     }
   }
-  
-
 
   const howToShowTask  = (filterBy) => setFilterBy(filterBy);
  
@@ -128,7 +129,7 @@ function App() {
   const addTask = async (userInput) => {
     await postRequest(userInput);
     //getDataRequest();
-    setCurrentTodo(await getRequest());
+    await getTodos();
   }
 
   const removeTask = async (uuid) => {
@@ -137,7 +138,7 @@ function App() {
       onPageChanged(1, currentPage - 1);
     }
     //getDataRequest();
-    setCurrentTodo(await getRequest());
+    await getTodos();
   }
 
   const fullUpdateTask = async (uuid, task, done, isCheckBox) => {
@@ -146,12 +147,12 @@ function App() {
     } else {
       await patchRequest(uuid, task, done);
     }
-    setCurrentTodo(await getRequest());
+    await getTodos();
     //getDataRequest();
   }
 
   // const getDataRequest = useCallback( async () => {
-  //   const myData = await getRequest();
+  //   const myData = await getTodos();
   //   const newData = myData.slice(
   //     (currentPage - 1) * LIMIT,
   //     (currentPage - 1) * LIMIT + LIMIT
@@ -188,14 +189,19 @@ function App() {
     return currentData;
   }, [currentTodo, currentPage]);
 
+  const totalRecords = useMemo( () => {
+    return currentTodo.length;
+  }, [currentTodo] );
+
   const pages = Math.ceil(totalRecords / LIMIT) || 0;
  
 
 
   useEffect( async () => {
     console.log("useEffect");
-    const serverData = await getRequest();
-    setCurrentTodo(serverData);
+    await getTodos();
+    onPageChanged(1, 1);
+    //setCurrentTodo(serverData);
     //getDataRequest();
   }, [filterBy, order]);
 
