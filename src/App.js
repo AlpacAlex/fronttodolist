@@ -62,7 +62,7 @@ function App() {
   }
  
 
-  const postRequest = async (task, done = false, userId = 1) => {
+  const addNewTask = async (task, done = false, userId = 1) => {
     const GET_REQUEST = `/v1/task/${userId}`;
     const urlAdres = URL + GET_REQUEST;
     try {// if task ???
@@ -82,7 +82,7 @@ function App() {
     }
   }
 
-  const patchRequest = async (uuid, task, done, userId = 1) => {
+  const updateTask = async (uuid, task, done, userId = 1) => {
     const GET_REQUEST = `/v1/task/${userId}/${uuid}`;
     const urlAdres = URL + GET_REQUEST;
     try {
@@ -103,7 +103,7 @@ function App() {
 
   }
 
-  const deleteRequest = async (uuid, userId = 1) => {
+  const deleteTask = async (uuid, userId = 1) => {
     const GET_REQUEST = `/v1/task/${userId}/${uuid}`;
     const urlAdres = URL + GET_REQUEST;
     try {
@@ -127,13 +127,13 @@ function App() {
   const sortTodo = (orderBy) =>  setOrder(orderBy); 
 
   const addTask = async (userInput) => {
-    await postRequest(userInput);
+    await addNewTask(userInput);
     //getDataRequest();
     await getTodos();
   }
 
   const removeTask = async (uuid) => {
-    await deleteRequest(uuid);
+    await deleteTask(uuid);
     if (!((totalRecords - 1) % LIMIT)) {
       onPageChanged(1, currentPage - 1);
     }
@@ -143,9 +143,9 @@ function App() {
 
   const fullUpdateTask = async (uuid, task, done, isCheckBox) => {
     if (isCheckBox) {
-      await patchRequest(uuid, task, !done);
+      await updateTask(uuid, task, !done);
     } else {
-      await patchRequest(uuid, task, done);
+      await updateTask(uuid, task, done);
     }
     await getTodos();
     //getDataRequest();
