@@ -30,8 +30,8 @@ function App() {
 
 
   const handleError = (err) => {
-    console.log(err.message);
-    console.log(err.response?.data?.message || err.message);
+    //console.log(err.message);
+    //console.log(err.response?.data?.message || err.message);
     setError({
       er: true,
       msg: err.response?.data?.message || err.message
@@ -42,7 +42,7 @@ function App() {
   //let totalRecords = currentTodo.length;
   const LIMIT = 5;
   const classes = useStyles();
-  const URL = "https://todo-api-learning.herokuapp.co";//m
+  const URL = "https://todo-api-learning.herokuapp.com";//m
 
 
   const getTodos = async (userId = 1) => {
