@@ -27,12 +27,22 @@ function App() {
     er: false,
     msg: null
   });
+
+
+  const handleError = (err) => {
+    console.log(err.message);
+    console.log(err.response?.data?.message || err.message);
+    setError({
+      er: true,
+      msg: err.response?.data?.message || err.message
+    })
+  }
   //const [flag, setFlag] = useState(0); 
   
   //let totalRecords = currentTodo.length;
   const LIMIT = 5;
   const classes = useStyles();
-  const URL = "https://todo-api-learning.herokuapp.com";//m
+  const URL = "https://todo-api-learning.herokuapp.co";//m
 
 
   const getTodos = async (userId = 1) => {
@@ -53,10 +63,7 @@ function App() {
         //onPageChanged(1, 1);
       } 
     } catch (error) {
-      setError({
-        er: true,
-        msg: error.response?.data?.message
-      }); 
+      handleError(error);
       //setCurrentTodo([]);
     }  
   }
@@ -75,10 +82,7 @@ function App() {
         return response.data; 
       }
     } catch (error) {
-      setError({
-        er: true,
-        msg: error.response?.data?.message
-      });
+      handleError(error);
     }
   }
 
@@ -95,10 +99,7 @@ function App() {
         return response.data; 
       }
     } catch (error) {
-      setError({
-        er: true,
-        msg: error.response?.data?.message
-      });
+      handleError(error);
     }
 
   }
@@ -115,10 +116,7 @@ function App() {
         //snack bar flag error
       }
     } catch (error) {
-      setError({
-        er: true,
-        msg: error.response?.data?.message
-      });
+      handleError(error);
     }
   }
 
