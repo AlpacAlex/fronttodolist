@@ -20,7 +20,7 @@ function App() {
   const [currentTodo, setCurrentTodo] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [order, setOrder] = useState('asc');
-  const [filterBy, setFilterBy] = useState('all');
+  const [filterBy, setFilterBy] = useState('');
 
 
   const [error, setError] = useState({
@@ -49,9 +49,6 @@ function App() {
     const GET_REQUEST = `/v1/tasks/${userId}`;
     const urlAdres = URL + GET_REQUEST;
     try {
-      if (filterBy === "all") {
-        setFilterBy("");
-      }
       const response = await axios.get(urlAdres, { 
         params: {
           filterBy: filterBy,
@@ -197,7 +194,10 @@ function App() {
 
   useEffect( async () => {
     console.log("useEffect");
-    await getTodos();
+    async function fixTodo() {
+      await getTodos();
+    }
+    fixTodo();
     onPageChanged(1, 1);
     //setCurrentTodo(serverData);
     //getDataRequest();
