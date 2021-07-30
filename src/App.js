@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import MenuToDo from "./MenuToDo";
 import ToDo from './ToDo';
 import ToDoForm from './ToDoForm';
@@ -9,6 +9,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import styles from "./myStyle";
 import useStyles from "./styleTheme";
 const axios = require('axios');
+require('dotenv').config();
 
 
 function Alert(props) {
@@ -16,9 +17,9 @@ function Alert(props) {
 }
 
 function App() {
-  //const [todos, setTodos] = useState([]);
   const [currentTodo, setCurrentTodo] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [allRecords, setAllRecords] = useState();
   const [order, setOrder] = useState('asc');
   const [filterBy, setFilterBy] = useState('');
 
@@ -30,53 +31,46 @@ function App() {
 
 
   const handleError = (err) => {
-    //console.log(err.message);
-    //console.log(err.response?.data?.message || err.message);
     setError({
       er: true,
       msg: err.response?.data?.message || err.message
     })
   }
-  //const [flag, setFlag] = useState(0); 
-  
-  //let totalRecords = currentTodo.length;
+
   const LIMIT = 5;
   const classes = useStyles();
-  const URL = "https://todo-api-learning.herokuapp.com";//m
+  const URL = process.env.REACT_APP_URL;
 
 
-  const getTodos = async (userId = 1) => {
-    const GET_REQUEST = `/v1/tasks/${userId}`;
-    const urlAdres = URL + GET_REQUEST;
+
+  const getTodos = useCallback(async (userId = 1) => {
     try {
-      const response = await axios.get(urlAdres, { 
+      const response = await axios.get(`${URL}/tasks/${userId}`, {
         params: {
+          page: currentPage,
           filterBy: filterBy,
-          order: order
+          orderBy: order
         }
       })
       if (response.status === 200) {
-        setCurrentTodo(response.data);
-        //onPageChanged(1, 1);
-      } 
+        setCurrentTodo(response.data.rows);
+        setAllRecords(response.data.count);
+      }
     } catch (error) {
       handleError(error);
-      //setCurrentTodo([]);
-    }  
-  }
- 
+    }
+  }, [URL, currentPage, filterBy, order]
+  );
+
 
   const addNewTask = async (task, done = false, userId = 1) => {
-    const GET_REQUEST = `/v1/task/${userId}`;
-    const urlAdres = URL + GET_REQUEST;
-    try {// if task ???
-      const response = await axios.post(urlAdres, {
+    try {
+      const response = await axios.post(`${URL}/task/${userId}`, {
         name: task,
         done: done
       });
-      //console.log(response);
       if (response.status === 200) {
-        return response.data; 
+        return response.data;
       }
     } catch (error) {
       handleError(error);
@@ -84,16 +78,13 @@ function App() {
   }
 
   const updateTask = async (uuid, task, done, userId = 1) => {
-    const GET_REQUEST = `/v1/task/${userId}/${uuid}`;
-    const urlAdres = URL + GET_REQUEST;
     try {
-      const response = await axios.patch(urlAdres, {
+      const response = await axios.patch(`${URL}/task/${userId}/${uuid}`, {
         name: task,
         done: done
       });
-      //console.log(response);
       if (response.status === 200) {
-        return response.data; 
+        return response.data;
       }
     } catch (error) {
       handleError(error);
@@ -102,24 +93,19 @@ function App() {
   }
 
   const deleteTask = async (uuid, userId = 1) => {
-    const GET_REQUEST = `/v1/task/${userId}/${uuid}`;
-    const urlAdres = URL + GET_REQUEST;
     try {
-      const response = await axios.delete(urlAdres);
-      //console.log(response);
+      const response = await axios.delete(`${URL}/task/${userId}/${uuid}`);
       if (response.status === 204) {
-        return response; 
-      } else {
-        //snack bar flag error
+        return response;
       }
     } catch (error) {
       handleError(error);
     }
   }
 
-  const howToShowTask  = (filterBy) => setFilterBy(filterBy);
- 
-  const sortTodo = (orderBy) =>  setOrder(orderBy); 
+  const howToShowTask = (filterBy) => setFilterBy(filterBy);
+
+  const sortTodo = (orderBy) => setOrder(orderBy);
 
   const addTask = async (userInput) => {
     await addNewTask(userInput);
@@ -129,7 +115,7 @@ function App() {
 
   const removeTask = async (uuid) => {
     await deleteTask(uuid);
-    if (!((totalRecords - 1) % LIMIT)) {
+    if (!((allRecords - 1) % LIMIT)) {
       onPageChanged(1, currentPage - 1);
     }
     //getDataRequest();
@@ -140,24 +126,15 @@ function App() {
     if (isCheckBox) {
       await updateTask(uuid, task, !done);
     } else {
-      await updateTask(uuid, task, done);
+      const err = await updateTask(uuid, task, done);
+      if (!err)
+        return false;
     }
     await getTodos();
-    //getDataRequest();
   }
 
-  // const getDataRequest = useCallback( async () => {
-  //   const myData = await getTodos();
-  //   const newData = myData.slice(
-  //     (currentPage - 1) * LIMIT,
-  //     (currentPage - 1) * LIMIT + LIMIT
-  //   );
-  //   setCurrentTodo(newData);
-  //   return myData;
-  // }, [currentPage, filterBy, order] );
-  
   const onPageChanged = useCallback(
-    (event, page, maxPage=-1) => {
+    (event, page, maxPage = -1) => {
       if (page < 1) page++;
       if (maxPage !== -1 && page > maxPage) page--;
       setCurrentPage(page);
@@ -172,71 +149,49 @@ function App() {
     setError(false);
   };
 
+  const pages = Math.ceil(allRecords / LIMIT) || 0;
 
-  const currentData = useMemo( () => {
-    const currentData = [...currentTodo]
-    .slice(
-      (currentPage - 1) * LIMIT,
-      (currentPage - 1) * LIMIT + LIMIT
-    );
-    //currentData.sort( (a,b) => Date.parse(a.createdAt) - Date.parse(b.createdAt) );
-
-    return currentData;
-  }, [currentTodo, currentPage]);
-
-  const totalRecords = useMemo( () => {
-    return currentTodo.length;
-  }, [currentTodo] );
-
-  const pages = Math.ceil(totalRecords / LIMIT) || 0;
- 
-
-
-  useEffect( async () => {
-    console.log("useEffect");
+  useEffect(() => {
     async function fixTodo() {
       await getTodos();
     }
     fixTodo();
-    onPageChanged(1, 1);
-    //setCurrentTodo(serverData);
-    //getDataRequest();
-  }, [filterBy, order]);
+  }, [filterBy, order, currentPage, getTodos]);
 
   return (
-    <Box className="App"> 
+    <Box className="App">
       <Grid container spacing={0}>
         <Grid item xs={12}>
-          <Paper style={styles.App.Header} elevation={0}>ToDo: {currentTodo.length}</Paper>
+          <Paper style={styles.App.Header} elevation={0}>ToDo: {allRecords}</Paper>
           <Paper style={styles.App.Paper}>
-            <ToDoForm addTask={addTask}/>
+            <ToDoForm addTask={addTask} />
           </Paper>
           <MenuToDo
-            howToShowTask = {howToShowTask}
-            sortTodo = {sortTodo}
+            howToShowTask={howToShowTask}
+            sortTodo={sortTodo}
           />
-          {currentData.map((todo) =>        
+          {currentTodo.map((todo) =>
             <ToDo
               key={Date.parse(todo.createdAt)}//Date.parse(todo.createdAt)
-              todo={todo}           
+              todo={todo}
               fullUpdateTask={fullUpdateTask}
               removeTask={removeTask}
-              />   
-            )}
-          <Box className={classes.root}>        
-            {pages > 1 && <Pagination 
+            />
+          )}
+          <Box className={classes.root}>
+            {pages > 1 && <Pagination
               count={pages}
               onChange={onPageChanged}
               defaultPage={1}
               color="primary"
-              classes={{ ul: classes.paginator }} 
-            />}     
+              classes={{ ul: classes.paginator }}
+            />}
           </Box>
         </Grid>
-          <Snackbar open={error.er} autoHideDuration={7000} onClose={handleCloseToast}>
-            <Alert onClose={handleCloseToast} severity="error">
-              {error.msg}
-            </Alert>
+        <Snackbar open={error.er} autoHideDuration={7000} onClose={handleCloseToast}>
+          <Alert onClose={handleCloseToast} severity="error">
+            {error.msg}
+          </Alert>
         </Snackbar>
       </Grid>
     </Box>
