@@ -128,7 +128,7 @@ function App() {
     } else {
       const err = await updateTask(uuid, task, done);
       if (!err)
-        return false;
+        return true;
     }
     await getTodos();
   }

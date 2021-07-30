@@ -18,8 +18,7 @@ function ToDo({ todo, fullUpdateTask, removeTask }) {
             const isValid = validInputText.test(newTextInput);
             if (isValid) {
                 const err = await fullUpdateTask(todo.uuid, newTextInput, todo.done, false);
-                if (!err)
-                    setChangeValue(todo.name);
+                err ? setChangeValue(todo.name) : setChangeValue(newTextInput);
             } else {
                 setChangeValue(todo.name);
             }
