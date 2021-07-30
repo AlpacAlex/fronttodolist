@@ -11,14 +11,15 @@ function ToDo({ todo, fullUpdateTask, removeTask }) {
     const [isDisabled, setIsDisabled] = useState(false);
     const validInputText = /^[\w\s]{1,18}$/gm;
 
-    const handleChangeValue = (e) => {
+    const handleChangeValue = async (e) => {
         const newTextInput = e.currentTarget.value;
         setChangeValue(newTextInput);
-        if (e.keyCode === 13)
-        {
+        if (e.keyCode === 13) {
             const isValid = validInputText.test(newTextInput);
             if (isValid) {
-                fullUpdateTask(todo.uuid, newTextInput, todo.done, false);
+                const err = await fullUpdateTask(todo.uuid, newTextInput, todo.done, false);
+                if (!err)
+                    setChangeValue(todo.name);
             } else {
                 setChangeValue(todo.name);
             }
@@ -26,7 +27,7 @@ function ToDo({ todo, fullUpdateTask, removeTask }) {
         } else if (e.keyCode === 27) {
             setChangeValue(todo.name);
             document.activeElement.blur();
-        }       
+        }
     };
 
     const deleteTask = (uuid) => {
@@ -34,27 +35,26 @@ function ToDo({ todo, fullUpdateTask, removeTask }) {
         removeTask(todo.uuid);
     }
 
-    //{it, userInput = "", complete = -1, uuid = 0, upTask = "" }
     return (
         <Grid item xs={12}>
             <Paper elevation={2} style={styles.ToDo.Paper}>
-                <Checkbox 
+                <Checkbox
                     checked={todo.done ? true : false}
-                    onChange={()=>{}} 
+                    onChange={() => { }}
                     onClick={() => fullUpdateTask(todo.uuid, todo.name, todo.done, true)}
                     color="secondary"
                 />
-                <Input 
-                    value={changeValue} 
+                <Input
+                    value={changeValue}
                     disableUnderline={true}
-                    onChange={handleChangeValue} 
+                    onChange={handleChangeValue}
                     onKeyDown={handleChangeValue}
                     style={{ width: "64%" }}
                 />
                 <Box component="span" style={styles.ToDo.Date} textAlign="right" m={1}>{new Date(todo.createdAt).toLocaleDateString()}</Box>
                 <IconButton
                     style={styles.ToDo.Icon}
-                    disabled={isDisabled}               
+                    disabled={isDisabled}
                     color="secondary"
                     aria-label="Delete"
                     onClick={() => deleteTask(todo.uuid)}
@@ -62,9 +62,9 @@ function ToDo({ todo, fullUpdateTask, removeTask }) {
                     <Delete fontSize="small" />
                 </IconButton>
             </Paper>
-        </Grid> 
+        </Grid>
     );
-    
+
 }
 
 
