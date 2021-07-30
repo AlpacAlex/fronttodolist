@@ -103,13 +103,15 @@ function App() {
     }
   }
 
-  const howToShowTask = (filterBy) => setFilterBy(filterBy);
+  const howToShowTask = (filterBy) => {
+    setFilterBy(filterBy); 
+    onPageChanged(1, 1);
+  }
 
   const sortTodo = (orderBy) => setOrder(orderBy);
 
   const addTask = async (userInput) => {
     await addNewTask(userInput);
-    //getDataRequest();
     await getTodos();
   }
 
@@ -118,7 +120,6 @@ function App() {
     if (!((allRecords - 1) % LIMIT)) {
       onPageChanged(1, currentPage - 1);
     }
-    //getDataRequest();
     await getTodos();
   }
 
