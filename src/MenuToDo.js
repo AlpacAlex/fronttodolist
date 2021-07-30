@@ -8,7 +8,7 @@ import styles from "./myStyle";
 function MenuToDo({ howToShowTask, sortTodo }) {
     return (
         <Box style={styles.MenuToDo.MenuTodo}>
-            <Button className="all" onClick={() => howToShowTask("all")}>All</Button>
+            <Button className="all" onClick={() => howToShowTask("")}>All</Button>
             <Button className="done" onClick={() => howToShowTask("done")}>Done</Button>
             <Button className="undone" onClick={() => howToShowTask("undone")} style={{ marginRight: 90  }}>Undone</Button>
             <Box component="span" className="sort">Sort by Date</Box>
