@@ -54,6 +54,40 @@ const styles = {
             fontSize: 20,
             marginLeft: "auto"
         } 
+    },
+    Sign: {
+        Paper: {
+            padding: 20,
+            margin: "auto",
+            textAlign: "center",
+            width: 300,
+            backgroundColor: "transparent"
+        },
+        Header: {
+            padding: 10,
+            margin: "auto",
+            textAlign: "center",
+            fontSize: 40,
+            width: 300,
+            backgroundColor: "transparent",
+            color: "black"
+        },
+        TextField: {
+            margin: 6
+        },
+        Button: {
+            margin: 6,
+            width: "70%"
+        }
+    },
+    UnderAuth: {
+        padding: 10,
+        margin: "auto",
+        textAlign: "center",
+        fontSize: 14,
+        width: 300,
+        backgroundColor: "transparent",
+        color: "grey"
     }
 };
 

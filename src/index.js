@@ -1,12 +1,20 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import './index.css';
 import App from './App';
+import SignIn from './SignIn';
+import SignUn from './SignUp';
 import reportWebVitals from './reportWebVitals';
+import { HashRouter, Switch, Route, Link, Redirect } from "react-router-dom";
+
 
 ReactDOM.render(
-    <App />,
+  <HashRouter>
+    <Redirect to="/signin" />
+    <Switch>
+      <Route exact path="/signin" component={SignIn}/>
+      <Route exact path="/signup" component={SignUn}/>
+    </Switch>
+  </HashRouter>,
   document.getElementById('root')
 );
 
