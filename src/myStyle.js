@@ -73,10 +73,11 @@ const styles = {
             color: "black"
         },
         TextField: {
-            margin: 6
+            margin: 9,
+            backgroundColor: "transparent"
         },
         Button: {
-            margin: 6,
+            margin: 9,
             width: "70%"
         }
     },
